@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Slice & Spice – Food Delivery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #fefaf7;
+            color: #1a1a2c;
+            line-height: 1.5;
+        }
+
+        /* Import Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap');
+
+        /* Header */
+        .header {
+            background: #ff6b35;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            background: white;
+            color: #ff6b35;
+            padding: 0 10px;
+            border-radius: 50px;
+            margin-right: 6px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .nav-buttons button {
+            background: white;
+            color: #ff6b35;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        .nav-buttons button:hover {
+            transform: scale(0.96);
+            background: #fff0e6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Auth cards */
+        .auth-forms {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            width: 380px;
+            transition: 0.2s;
+        }
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
+            color: #ff6b35;
+        }
+        .card input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: #fefaf7;
+        }
+        .card button {
+            width: 100%;
+            padding: 12px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.2s;
+        }
+        .card button:hover {
+            background: #e55a2b;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+        .dashboard.active {
+            display: block;
+        }
+
+        /* Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .menu-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.15);
+        }
+        .menu-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .menu-content {
+            padding: 1.2rem 1.2rem 1.5rem;
+        }
+        .menu-content h4 {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+        .price {
+            color: #ff6b35;
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin: 0.6rem 0;
+        }
+        .add-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .add-btn:hover {
+            background: #e55a2b;
+        }
+
+        /* Cart */
+        .cart-container {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0e2d8;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cart-item-quantity button {
+            background: #f0e2d8;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .cart-total {
+            text-align: right;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+        .place-order-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Orders */
+        .order-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status.pending { background: #ffecb3; color: #b95f00; }
+        .status.preparing { background: #cfe8ff; color: #0056a7; }
+        .status.ready { background: #c8e6d9; color: #1e6f3f; }
+        .status.delivered { background: #e2e3e5; color: #383d41; }
+
+        /* Owner table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 24px;
+            overflow-x: auto;
+            display: block;
+        }
+        .orders-table th, .orders-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #f0e2d8;
+        }
+        .orders-table th {
+            background: #ff6b35;
+            color: white;
+        }
+        .points {
+            background: #ffd966;
+            padding: 5px 12px;
+            border-radius: 60px;
+            font-weight: 700;
+        }
+        hr {
+            margin: 1rem 0;
+            border: none;
+            border-top: 2px solid #ffe0d0;
+        }
+        button, .add-btn, .place-order-btn {
+            cursor: pointer;
+        }
+        @media (max-width: 700px) {
+            .header { flex-direction: column; text-align: center; }
+            .container { padding: 1rem; }
+            .menu-grid { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo"><span>🍕</span> Slice & Spice</div>
+    <div class="nav-buttons">
+        <button onclick="showCustomerAuth()">Customer</button>
+        <button onclick="showOwnerAuth()">Owner</button>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Customer Auth -->
+    <div id="customerAuth" class="auth-forms">
+        <div class="card">
+            <h3>🍔 Login</h3>
+            <input type="email" id="custLoginEmail" placeholder="Email">
+            <input type="password" id="custLoginPassword" placeholder="Password">
+            <button onclick="customerLogin()">Login</button>
+            <p style="margin-top: 12px; font-size:0.85rem;">New? Register below 👇</p>
+        </div>
+        <div class="card">
+            <h3>📝 Register</h3>
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Password">
+            <input type="text" id="regPhone" placeholder="Phone (optional)">
+            <button onclick="customerRegister()">Create account</button>
+        </div>
+    </div>
+
+    <!-- Owner Auth -->
+    <div id="ownerAuth" class="auth-forms" style="display:none;">
+        <div class="card">
+            <h3>👑 Owner access</h3>
+            <input type="email" id="ownerEmail" placeholder="Email" value="owner@restaurant.com">
+            <input type="password" id="ownerPassword" placeholder="Password" value="owner123">
+            <button onclick="ownerLogin()">Login as Owner</button>
+        </div>
+    </div>
+
+    <!-- Customer Dashboard -->
+    <div id="customerDashboard" class="dashboard">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h2>👋 Welcome, <span id="customerName"></span>!</h2>
+            <div><span class="points" id="pointsDisplay">⭐ 0 points</span>
+            <button onclick="logout()" style="background:#e2e2e2; color:#333; margin-left:12px; border:none; padding:6px 14px; border-radius:60px;">Logout</button></div>
+        </div>
+        <hr>
+
+        <h3>🍕 Our Menu</h3>
+        <div id="menuGrid" class="menu-grid"></div>
+
+        <div class="cart-container">
+            <h3>🛒 Your cart</h3>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal">Total: $0.00</div>
+            <div style="margin: 15px 0;">
+                <label for="deliveryAddress" style="font-weight:600;">📍 Delivery address</label>
+                <input type="text" id="deliveryAddress" placeholder="Street, city, postal code" style="width:100%; padding:12px; border-radius:60px; border:1px solid #ddd; margin-top:6px;">
+            </div>
+            <button class="place-order-btn" onclick="placeOrder()">Place order →</button>
+        </div>
+
+        <h3>📋 Your orders</h3>
+        <button onclick="loadMyOrders()" style="margin-bottom:1rem; background:#eee; border:none; padding:8px 16px; border-radius:60px;">⟳ Refresh orders</button>
+        <div id="ordersList" class="orders-list"></div>
+    </div>
+
+    <!-- Owner Dashboard -->
+    <div id="ownerDashboard" class="dashboard">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <h2>👑 Owner panel</h2>
+            <button onclick="logout()" style="background:#e2e2e2; border:none; padding:6px 16px; border-radius:60px;">Logout</button>
+        </div>
+        <hr>
+        <div style="display:flex; gap:12px; margin-bottom:1rem;">
+            <button onclick="loadSalesReport('today')" style="background:#ff6b35; color:white; border:none; padding:8px 20px; border-radius:60px;">Today's sales</button>
+            <button onclick="loadSalesReport('week')" style="background:#ff6b35; color:white; border:none; padding:8px 20px; border-radius:60px;">This week</button>
+        </div>
+        <div id="salesReport" style="background:white; padding:1rem; border-radius:24px; margin-bottom:1.5rem;"></div>
+        <h3>📦 All orders</h3>
+        <button onclick="loadAllOrders()" style="margin-bottom:1rem;">⟳ Refresh orders</button>
+        <div id="allOrdersContainer" style="overflow-x:auto;"></div>
+    </div>
+</div>
+
+<script>
+    // ========== GLOBALS ==========
+    let token = localStorage.getItem('token');
+    let role = localStorage.getItem('role');
+    let cart = [];
+
+    // ========== INIT ==========
+    if (token && role === 'customer') showCustomerDashboard();
+    else if (token && role === 'owner') showOwnerDashboard();
+    else showCustomerAuth();
+
+    // ========== UI ==========
+    function showCustomerAuth() {
+        document.getElementById('customerAuth').style.display = 'flex';
+        document.getElementById('ownerAuth').style.display = 'none';
+        document.getElementById('customerDashboard').classList.remove('active');
+        document.getElementById('ownerDashboard').classList.remove('active');
+    }
+    function showOwnerAuth() {
+        document.getElementById('customerAuth').style.display = 'none';
+        document.getElementById('ownerAuth').style.display = 'flex';
+        document.getElementById('customerDashboard').classList.remove('active');
+        document.getElementById('ownerDashboard').classList.remove('active');
+    }
+    async function showCustomerDashboard() {
+        document.getElementById('customerAuth').style.display = 'none';
+        document.getElementById('ownerAuth').style.display = 'none';
+        document.getElementById('customerDashboard').classList.add('active');
+        document.getElementById('ownerDashboard').classList.remove('active');
+        await loadMenu();
+        await loadMyOrders();
+        await loadPoints();
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        document.getElementById('customerName').innerText = user.full_name || 'Customer';
+    }
+    async function showOwnerDashboard() {
+        document.getElementById('customerAuth').style.display = 'none';
+        document.getElementById('ownerAuth').style.display = 'none';
+        document.getElementById('customerDashboard').classList.remove('active');
+        document.getElementById('ownerDashboard').classList.add('active');
+        await loadAllOrders();
+        await loadSalesReport('today');
+    }
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user');
+        token = null; role = null;
+        cart = [];
+        showCustomerAuth();
+        location.reload();
+    }
+
+    // ========== CUSTOMER API ==========
+    async function customerRegister() {
+        const full_name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const phone = document.getElementById('regPhone').value;
+        const res = await fetch('http://localhost:3000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, full_name, phone })
+        });
+        const data = await res.json();
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', 'customer');
+            localStorage.setItem('user', JSON.stringify(data.user));
+            token = data.token; role = 'customer';
+            showCustomerDashboard();
+        } else alert('Registration error: ' + (data.error || 'unknown'));
+    }
+
+    async function customerLogin() {
+        const email = document.getElementById('custLoginEmail').value;
+        const password = document.getElementById('custLoginPassword').value;
+        const res = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.token && data.user.role === 'customer') {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', 'customer');
+            localStorage.setItem('user', JSON.stringify(data.user));
+            token = data.token; role = 'customer';
+            showCustomerDashboard();
+        } else alert('Login failed. Check credentials.');
+    }
+
+    async function loadMenu() {
+        const res = await fetch('http://localhost:3000/menu');
+        const menu = await res.json();
+        const container = document.getElementById('menuGrid');
+        container.innerHTML = '';
+        for (const item of menu) {
+            const imgUrl = item.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
+            const card = document.createElement('div');
+            card.className = 'menu-card';
+            card.innerHTML = `
+                <img src="${imgUrl}" class="menu-img" alt="${escapeHtml(item.name)}" loading="lazy">
+                <div class="menu-content">
+                    <h4>${escapeHtml(item.name)}</h4>
+                    <p style="color:#666; margin-bottom:0.5rem;">${escapeHtml(item.description || '')}</p>
+                    <div class="price">$${item.price}</div>
+                    <button class="add-btn" onclick="addToCart(${item.id}, '${escapeHtml(item.name)}', ${item.price})">+ Add to cart</button>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+    }
+
+    function escapeHtml(str) { 
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m){
+            if(m==='&') return '&amp;';
+            if(m==='<') return '&lt;';
+            if(m==='>') return '&gt;';
+            return m;
+        });
+    }
+
+    function addToCart(id, name, price) {
+        const existing = cart.find(i => i.id === id);
+        if (existing) existing.quantity++;
+        else cart.push({ id, name, price, quantity: 1 });
+        updateCartDisplay();
+    }
+    function updateCartDisplay() {
+        const container = document.getElementById('cartItems');
+        if (cart.length === 0) {
+            container.innerHTML = '<p>Your cart is empty.</p>';
+            document.getElementById('cartTotal').innerHTML = 'Total: $0.00';
+            return;
+        }
+        let html = '', total = 0;
+        cart.forEach((item, idx) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            html += `
+                <div class="cart-item">
+                    <div><strong>${escapeHtml(item.name)}</strong> - $${item.price} ea</div>
+                    <div class="cart-item-quantity">
+                        <button onclick="changeQuantity(${idx}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="changeQuantity(${idx}, 1)">+</button>
+                        <button onclick="removeFromCart(${idx})" style="background:#dc3545; color:white; width:auto; padding:5px 12px;">Remove</button>
+                    </div>
+                    <div>$${itemTotal.toFixed(2)}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        document.getElementById('cartTotal').innerHTML = `Total: $${total.toFixed(2)}`;
+    }
+    function changeQuantity(idx, delta) {
+        const newQty = cart[idx].quantity + delta;
+        if (newQty <= 0) cart.splice(idx,1);
+        else cart[idx].quantity = newQty;
+        updateCartDisplay();
+    }
+    function removeFromCart(idx) { cart.splice(idx,1); updateCartDisplay(); }
+
+    async function placeOrder() {
+        if (!cart.length) { alert('Cart empty'); return; }
+        const delivery_address = document.getElementById('deliveryAddress').value.trim();
+        if (!delivery_address) { alert('Please enter delivery address'); return; }
+        const items = cart.map(i => ({ menu_item_id: i.id, quantity: i.quantity }));
+        const res = await fetch('http://localhost:3000/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({ items, delivery_address })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`Order placed! Total $${data.total_price}. Earned ${data.points_earned} points. Delivery to: ${delivery_address}`);
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('deliveryAddress').value = '';
+            loadMyOrders();
+            loadPoints();
+        } else alert('Order failed: ' + (data.error || ''));
+    }
+
+    async function loadMyOrders() {
+        const res = await fetch('http://localhost:3000/my-orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const orders = await res.json();
+        const container = document.getElementById('ordersList');
+        if (!orders.length) { container.innerHTML = '<p>No orders yet.</p>'; return; }
+        container.innerHTML = orders.map(order => `
+            <div class="order-card">
+                <div><strong>Order #${order.id}</strong> — total $${order.total_price}</div>
+                <div>Status: <span class="status ${order.status}">${order.status}</span></div>
+                <div>📍 ${order.delivery_address || 'No address'}</div>
+                <div>🕒 ${new Date(order.created_at).toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
+
+    async function loadPoints() {
+        const res = await fetch('http://localhost:3000/my-points', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const data = await res.json();
+        document.getElementById('pointsDisplay').innerHTML = `⭐ ${data.points} points`;
+    }
+
+    // ========== OWNER ==========
+    async function ownerLogin() {
+        const email = document.getElementById('ownerEmail').value;
+        const password = document.getElementById('ownerPassword').value;
+        const res = await fetch('http://localhost:3000/login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.token && data.user.role === 'owner') {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', 'owner');
+            token = data.token; role = 'owner';
+            showOwnerDashboard();
+        } else alert('Owner login failed');
+    }
+
+    async function loadAllOrders() {
+        const res = await fetch('http://localhost:3000/owner/orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const orders = await res.json();
+        const container = document.getElementById('allOrdersContainer');
+        if (!orders.length) { container.innerHTML = '<p>No orders.</p>'; return; }
+        let html = '<table class="orders-table"><thead><tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Address</th><th>Placed</th><th>Action</th></tr></thead><tbody>';
+        orders.forEach(o => {
+            html += `<tr>
+                <td>${o.id}</td>
+                <td>${escapeHtml(o.customer_name)}</td>
+                <td>$${o.total_price}</td>
+                <td>${o.status}</td>
+                <td>${escapeHtml(o.delivery_address || '')}</td>
+                <td>${new Date(o.created_at).toLocaleString()}</td>
+                <td>
+                    <select id="status-${o.id}">
+                        <option value="pending" ${o.status==='pending' ? 'selected' : ''}>pending</option>
+                        <option value="preparing" ${o.status==='preparing' ? 'selected' : ''}>preparing</option>
+                        <option value="ready" ${o.status==='ready' ? 'selected' : ''}>ready</option>
+                        <option value="delivered" ${o.status==='delivered' ? 'selected' : ''}>delivered</option>
+                    </select>
+                    <button class="update-btn" onclick="updateOrderStatus(${o.id})">Update</button>
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    async function updateOrderStatus(orderId) {
+        const select = document.getElementById(`status-${orderId}`);
+        const newStatus = select.value;
+        const res = await fetch(`http://localhost:3000/owner/orders/${orderId}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) { alert(`Order #${orderId} → ${newStatus}`); loadAllOrders(); }
+        else alert('Update failed');
+    }
+
+    async function loadSalesReport(period) {
+        const res = await fetch(`http://localhost:3000/owner/sales?period=${period}`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const data = await res.json();
+        document.getElementById('salesReport').innerHTML = `
+            <strong>${period === 'today' ? '📆 Today' : '📅 This week'}</strong><br>
+            💰 Total sales: $${data.total_sales}<br>
+            🧾 Orders: ${data.total_orders}<br>
+            📊 Average order: $${data.average_order_value}
+        `;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Restaurant - Order Food Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+        .header {
+            background: #ff6b35;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .logo span {
+            background: white;
+            color: #ff6b35;
+            padding: 0 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .nav-buttons button {
+            background: white;
+            color: #ff6b35;
+            border: none;
+            padding: 8px 16px;
+            margin-left: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .auth-forms {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #ff6b35;
+        }
+        .card input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .card button {
+            width: 100%;
+            padding: 10px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .dashboard {
+            display: none;
+        }
+        .dashboard.active {
+            display: block;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .menu-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .price {
+            color: #ff6b35;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        .add-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .cart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cart-item-quantity button {
+            background: #ddd;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .cart-total {
+            text-align: right;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .place-order-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        .orders-list {
+            margin-top: 1rem;
+        }
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status.pending { background: #ffc107; color: #333; }
+        .status.preparing { background: #17a2b8; color: white; }
+        .status.ready { background: #28a745; color: white; }
+        .status.delivered { background: #6c757d; color: white; }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: auto;
+            display: block;
+        }
+        .orders-table th, .orders-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .orders-table th {
+            background: #ff6b35;
+            color: white;
+        }
+        .points {
+            background: gold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .error-msg { color: red; margin-top: 10px; }
+        .success-msg { color: green; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo"><span>🍕</span> My Restaurant</div>
+    <div class="nav-buttons" id="navButtons">
+        <button onclick="showCustomerAuth()">Customer</button>
+        <button onclick="showOwnerAuth()">Owner</button>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Customer Auth Section -->
+    <div id="customerAuth" class="auth-forms">
+        <div class="card">
+            <h3>Customer Login</h3>
+            <input type="email" id="custLoginEmail" placeholder="Email">
+            <input type="password" id="custLoginPassword" placeholder="Password">
+            <button onclick="customerLogin()">Login</button>
+            <p style="margin-top:10px; font-size:0.9rem;">New? Register below</p>
+        </div>
+        <div class="card">
+            <h3>Register</h3>
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Password">
+            <input type="text" id="regPhone" placeholder="Phone (optional)">
+            <button onclick="customerRegister()">Register</button>
+        </div>
+    </div>
+
+    <!-- Owner Auth Section -->
+    <div id="ownerAuth" class="auth-forms" style="display:none;">
+        <div class="card">
+            <h3>Owner Login</h3>
+            <input type="email" id="ownerEmail" placeholder="Email" value="owner@restaurant.com">
+            <input type="password" id="ownerPassword" placeholder="Password" value="owner123">
+            <button onclick="ownerLogin()">Login as Owner</button>
+        </div>
+    </div>
+
+    <!-- Customer Dashboard -->
+    <div id="customerDashboard" class="dashboard">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Welcome, <span id="customerName"></span>!</h2>
+            <div><span class="points" id="pointsDisplay">⭐ 0 points</span>
+                <button onclick="logout()" style="margin-left:15px;">Logout</button>
+            </div>
+        </div>
+        <hr style="margin: 1rem 0;">
+
+        <h3>📋 Our Menu</h3>
+        <div id="menuGrid" class="menu-grid"></div>
+
+        <div class="cart-container">
+            <h3>🛒 Your Cart</h3>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal">Total: $0.00</div>
+            <div style="margin: 15px 0;">
+                <label for="deliveryAddress" style="display:block; margin-bottom:5px;">Delivery Address:</label>
+                <input type="text" id="deliveryAddress" placeholder="Street, city, zip code" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
+            </div>
+            <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+        </div>
+
+        <h3>📦 Your Orders</h3>
+        <button onclick="loadMyOrders()" style="margin-bottom:1rem;">Refresh Orders</button>
+        <div id="ordersList" class="orders-list"></div>
+    </div>
+
+    <!-- Owner Dashboard -->
+    <div id="ownerDashboard" class="dashboard">
+        <div style="display:flex; justify-content:space-between;">
+            <h2>👑 Owner Dashboard</h2>
+            <button onclick="logout()">Logout</button>
+        </div>
+        <hr style="margin:1rem 0;">
+        <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+            <button onclick="loadSalesReport('today')">Today's Sales</button>
+            <button onclick="loadSalesReport('week')">This Week Sales</button>
+        </div>
+        <div id="salesReport" style="background:white; padding:1rem; border-radius:12px; margin-bottom:1rem;"></div>
+        <h3>All Orders</h3>
+        <button onclick="loadAllOrders()">Refresh Orders</button>
+        <div id="allOrdersContainer" style="overflow-x:auto; margin-top:1rem;"></div>
+    </div>
+</div>
+
+<script>
+    // ======================== GLOBALS ========================
+    let token = localStorage.getItem('token');
+    let role = localStorage.getItem('role');
+    let cart = [];  // { id, name, price, quantity }
+
+    // ======================== UI INIT ========================
+    if (token && role === 'customer') {
+        showCustomerDashboard();
+    } else if (token && role === 'owner') {
+        showOwnerDashboard();
+    } else {
+        showCustomerAuth();
+    }
+
+    // ======================== UI TOGGLES ========================
+    function showCustomerAuth() {
+        document.getElementById('customerAuth').style.display = 'flex';
+        document.getElementById('ownerAuth').style.display = 'none';
+        document.getElementById('customerDashboard').classList.remove('active');
+        document.getElementById('ownerDashboard').classList.remove('active');
+    }
+
+    function showOwnerAuth() {
+        document.getElementById('customerAuth').style.display = 'none';
+        document.getElementById('ownerAuth').style.display = 'flex';
+        document.getElementById('customerDashboard').classList.remove('active');
+        document.getElementById('ownerDashboard').classList.remove('active');
+    }
+
+    async function showCustomerDashboard() {
+        document.getElementById('customerAuth').style.display = 'none';
+        document.getElementById('ownerAuth').style.display = 'none';
+        document.getElementById('customerDashboard').classList.add('active');
+        document.getElementById('ownerDashboard').classList.remove('active');
+        // Load data
+        await loadMenu();
+        await loadMyOrders();
+        await loadPoints();
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        document.getElementById('customerName').innerText = user.full_name || 'Customer';
+    }
+
+    async function showOwnerDashboard() {
+        document.getElementById('customerAuth').style.display = 'none';
+        document.getElementById('ownerAuth').style.display = 'none';
+        document.getElementById('customerDashboard').classList.remove('active');
+        document.getElementById('ownerDashboard').classList.add('active');
+        await loadAllOrders();
+        await loadSalesReport('today');
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user');
+        token = null;
+        role = null;
+        cart = [];
+        showCustomerAuth();
+        location.reload();
+    }
+
+    // ======================== CUSTOMER API ========================
+    async function customerRegister() {
+        const full_name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const phone = document.getElementById('regPhone').value;
+        const res = await fetch('http://localhost:3000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, full_name, phone })
+        });
+        const data = await res.json();
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', 'customer');
+            localStorage.setItem('user', JSON.stringify(data.user));
+            token = data.token;
+            role = 'customer';
+            showCustomerDashboard();
+        } else {
+            alert('Registration failed: ' + (data.error || JSON.stringify(data)));
+        }
+    }
+
+    async function customerLogin() {
+        const email = document.getElementById('custLoginEmail').value;
+        const password = document.getElementById('custLoginPassword').value;
+        const res = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.token && data.user.role === 'customer') {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', 'customer');
+            localStorage.setItem('user', JSON.stringify(data.user));
+            token = data.token;
+            role = 'customer';
+            showCustomerDashboard();
+        } else {
+            alert('Login failed. Check credentials.');
+        }
+    }
+
+    async function loadMenu() {
+        const res = await fetch('http://localhost:3000/menu');
+        const menu = await res.json();
+        const container = document.getElementById('menuGrid');
+        container.innerHTML = '';
+        menu.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'menu-card';
+            card.innerHTML = `
+                <h4>${item.name}</h4>
+                <p>${item.description || ''}</p>
+                <div class="price">$${item.price}</div>
+                <button class="add-btn" onclick="addToCart(${item.id}, '${item.name}', ${item.price})">Add to Cart</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function addToCart(id, name, price) {
+        const existing = cart.find(i => i.id === id);
+        if (existing) {
+            existing.quantity++;
+        } else {
+            cart.push({ id, name, price, quantity: 1 });
+        }
+        updateCartDisplay();
+    }
+
+    function updateCartDisplay() {
+        const container = document.getElementById('cartItems');
+        if (cart.length === 0) {
+            container.innerHTML = '<p>Your cart is empty.</p>';
+            document.getElementById('cartTotal').innerHTML = 'Total: $0.00';
+            return;
+        }
+        let html = '';
+        let total = 0;
+        cart.forEach((item, idx) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            html += `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <strong>${item.name}</strong> - $${item.price} each
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button onclick="changeQuantity(${idx}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="changeQuantity(${idx}, 1)">+</button>
+                        <button onclick="removeFromCart(${idx})" style="background:#dc3545; color:white; width:auto; padding:5px 10px;">Remove</button>
+                    </div>
+                    <div>$${itemTotal.toFixed(2)}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        document.getElementById('cartTotal').innerHTML = `Total: $${total.toFixed(2)}`;
+    }
+
+    function changeQuantity(index, delta) {
+        const newQty = cart[index].quantity + delta;
+        if (newQty <= 0) {
+            cart.splice(index, 1);
+        } else {
+            cart[index].quantity = newQty;
+        }
+        updateCartDisplay();
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartDisplay();
+    }
+
+    async function placeOrder() {
+        if (cart.length === 0) {
+            alert('Cart is empty');
+            return;
+        }
+        const delivery_address = document.getElementById('deliveryAddress').value;
+        if (!delivery_address) {
+            alert('Please enter a delivery address');
+            return;
+        }
+        const items = cart.map(i => ({ menu_item_id: i.id, quantity: i.quantity }));
+        const res = await fetch('http://localhost:3000/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({ items, delivery_address })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`Order placed! Total: $${data.total_price}. Earned ${data.points_earned} points. Delivery to: ${delivery_address}`);
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('deliveryAddress').value = '';
+            loadMyOrders();
+            loadPoints();
+        } else {
+            alert('Order failed: ' + (data.error || JSON.stringify(data)));
+        }
+    }
+
+    async function loadMyOrders() {
+        const res = await fetch('http://localhost:3000/my-orders', {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        const orders = await res.json();
+        const container = document.getElementById('ordersList');
+        if (!orders.length) {
+            container.innerHTML = '<p>No orders yet.</p>';
+            return;
+        }
+        container.innerHTML = orders.map(order => `
+            <div class="order-card">
+                <div><strong>Order #${order.id}</strong> - Total: $${order.total_price}</div>
+                <div>Status: <span class="status ${order.status}">${order.status}</span></div>
+                <div>Delivery: ${order.delivery_address || 'No address'}</div>
+                <div>Placed: ${new Date(order.created_at).toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
+
+    async function loadPoints() {
+        const res = await fetch('http://localhost:3000/my-points', {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        const data = await res.json();
+        document.getElementById('pointsDisplay').innerHTML = `⭐ ${data.points} points`;
+    }
+
+    // ======================== OWNER API ========================
+    async function ownerLogin() {
+        const email = document.getElementById('ownerEmail').value;
+        const password = document.getElementById('ownerPassword').value;
+        const res = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.token && data.user.role === 'owner') {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', 'owner');
+            token = data.token;
+            role = 'owner';
+            showOwnerDashboard();
+        } else {
+            alert('Owner login failed');
+        }
+    }
+
+    async function loadAllOrders() {
+        const res = await fetch('http://localhost:3000/owner/orders', {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        const orders = await res.json();
+        const container = document.getElementById('allOrdersContainer');
+        if (!orders.length) {
+            container.innerHTML = '<p>No orders yet.</p>';
+            return;
+        }
+        let html = '<table class="orders-table"><thead><tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Address</th><th>Placed</th><th>Action</th></tr></thead><tbody>';
+        orders.forEach(order => {
+            html += `
+                <tr>
+                    <td>${order.id}</td>
+                    <td>${order.customer_name}</td>
+                    <td>$${order.total_price}</td>
+                    <td>${order.status}</td>
+                    <td>${order.delivery_address || ''}</td>
+                    <td>${new Date(order.created_at).toLocaleString()}</td>
+                    <td>
+                        <select id="status-${order.id}">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>pending</option>
+                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>preparing</option>
+                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>ready</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>delivered</option>
+                        </select>
+                        <button class="update-btn" onclick="updateOrderStatus(${order.id})">Update</button>
+                    </td>
+                </tr>
+            `;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    async function updateOrderStatus(orderId) {
+        const select = document.getElementById(`status-${orderId}`);
+        const newStatus = select.value;
+        const res = await fetch(`http://localhost:3000/owner/orders/${orderId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`Order #${orderId} status updated to ${newStatus}`);
+            loadAllOrders();
+        } else {
+            alert('Error updating status');
+        }
+    }
+
+    async function loadSalesReport(period) {
+        const res = await fetch(`http://localhost:3000/owner/sales?period=${period}`, {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        const data = await res.json();
+        document.getElementById('salesReport').innerHTML = `
+            <strong>${period === 'today' ? 'Today' : 'This Week'} Sales</strong><br>
+            Total Sales: $${data.total_sales}<br>
+            Total Orders: ${data.total_orders}<br>
+            Average Order: $${data.average_order_value}
+        `;
+    }
+</script>
+</body>
+</html>
