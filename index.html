@@ -433,7 +433,9 @@
         const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPassword').value;
         const phone = document.getElementById('regPhone').value;
-        const res = await fetch('http://localhost:3000/register', {
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, full_name, phone })
@@ -451,7 +453,9 @@
     async function customerLogin() {
         const email = document.getElementById('custLoginEmail').value;
         const password = document.getElementById('custLoginPassword').value;
-        const res = await fetch('http://localhost:3000/login', {
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -467,7 +471,9 @@
     }
 
     async function loadMenu() {
-        const res = await fetch('http://localhost:3000/menu');
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/menu');
         const menu = await res.json();
         const container = document.getElementById('menuGrid');
         container.innerHTML = '';
@@ -544,7 +550,9 @@
         const delivery_address = document.getElementById('deliveryAddress').value.trim();
         if (!delivery_address) { alert('Please enter delivery address'); return; }
         const items = cart.map(i => ({ menu_item_id: i.id, quantity: i.quantity }));
-        const res = await fetch('http://localhost:3000/orders', {
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/orders', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -564,7 +572,9 @@
     }
 
     async function loadMyOrders() {
-        const res = await fetch('http://localhost:3000/my-orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/my-orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const orders = await res.json();
         const container = document.getElementById('ordersList');
         if (!orders.length) { container.innerHTML = '<p>No orders yet.</p>'; return; }
@@ -579,7 +589,9 @@
     }
 
     async function loadPoints() {
-        const res = await fetch('http://localhost:3000/my-points', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/my-points', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const data = await res.json();
         document.getElementById('pointsDisplay').innerHTML = `⭐ ${data.points} points`;
     }
@@ -588,7 +600,9 @@
     async function ownerLogin() {
         const email = document.getElementById('ownerEmail').value;
         const password = document.getElementById('ownerPassword').value;
-        const res = await fetch('http://localhost:3000/login', {
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/login', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
@@ -602,7 +616,9 @@
     }
 
     async function loadAllOrders() {
-        const res = await fetch('http://localhost:3000/owner/orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
+
+/orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const orders = await res.json();
         const container = document.getElementById('allOrdersContainer');
         if (!orders.length) { container.innerHTML = '<p>No orders.</p>'; return; }
@@ -633,7 +649,9 @@
     async function updateOrderStatus(orderId) {
         const select = document.getElementById(`status-${orderId}`);
         const newStatus = select.value;
-        const res = await fetch(`http://localhost:3000/owner/orders/${orderId}/status`, {
+        const res = await fetch(`https://restaurant-backend-1-ito4.onrender.com
+
+/owner/orders/${orderId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
             body: JSON.stringify({ status: newStatus })
@@ -644,7 +662,9 @@
     }
 
     async function loadSalesReport(period) {
-        const res = await fetch(`http://localhost:3000/owner/sales?period=${period}`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch(`https://restaurant-backend-1-ito4.onrender.com
+
+/owner/sales?period=${period}`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const data = await res.json();
         document.getElementById('salesReport').innerHTML = `
             <strong>${period === 'today' ? '📆 Today' : '📅 This week'}</strong><br>
