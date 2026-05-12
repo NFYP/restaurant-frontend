@@ -572,9 +572,7 @@
     }
 
     async function loadMyOrders() {
-        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
-
-/my-orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com/my-orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const orders = await res.json();
         const container = document.getElementById('ordersList');
         if (!orders.length) { container.innerHTML = '<p>No orders yet.</p>'; return; }
@@ -589,9 +587,7 @@
     }
 
     async function loadPoints() {
-        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
-
-/my-points', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com/my-points', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const data = await res.json();
         document.getElementById('pointsDisplay').innerHTML = `⭐ ${data.points} points`;
     }
@@ -600,9 +596,7 @@
     async function ownerLogin() {
         const email = document.getElementById('ownerEmail').value;
         const password = document.getElementById('ownerPassword').value;
-        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
-
-/login', {
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com/login', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
@@ -616,9 +610,7 @@
     }
 
     async function loadAllOrders() {
-        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com
-
-/orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch('https://restaurant-backend-1-ito4.onrender.com/orders', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const orders = await res.json();
         const container = document.getElementById('allOrdersContainer');
         if (!orders.length) { container.innerHTML = '<p>No orders.</p>'; return; }
@@ -649,9 +641,7 @@
     async function updateOrderStatus(orderId) {
         const select = document.getElementById(`status-${orderId}`);
         const newStatus = select.value;
-        const res = await fetch(`https://restaurant-backend-1-ito4.onrender.com
-
-/owner/orders/${orderId}/status`, {
+        const res = await fetch(`https://restaurant-backend-1-ito4.onrender.com/owner/orders/${orderId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
             body: JSON.stringify({ status: newStatus })
@@ -662,9 +652,7 @@
     }
 
     async function loadSalesReport(period) {
-        const res = await fetch(`https://restaurant-backend-1-ito4.onrender.com
-
-/owner/sales?period=${period}`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+        const res = await fetch(`https://restaurant-backend-1-ito4.onrender.com/owner/sales?period=${period}`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
         const data = await res.json();
         document.getElementById('salesReport').innerHTML = `
             <strong>${period === 'today' ? '📆 Today' : '📅 This week'}</strong><br>
